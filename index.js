@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 
 var server = require('http').Server(app);
-var port = process.env.PORT || 3851;
+var port = process.env.PORT || 5557;
 var CircularJSON = require('circular-json');
 var io = require('socket.io')(server);
 

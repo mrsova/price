@@ -10,7 +10,7 @@ function in_array(what, where) {
 new Vue({
     el: '#app',
     data: {
-        connectedUsers: {},
+        connectedUsers: [],
         messages: [],
         message: {
             'type': '',
@@ -32,11 +32,9 @@ new Vue({
                     console.log(response);
                     for (key in response.data) {
                         this.room = key;
-                        var object = [];
                         for (var k in response.data[key].sockets) {
                             if (!in_array(k, this.connectedUsers)) {
-                                object.push({id: k, name: response.data[key].sockets[k]});
-                                this.connectedUsers = object;
+                                this.connectedUsers.push({id: k, name: response.data[key].sockets[k]});
                             }
                         }
                     }
