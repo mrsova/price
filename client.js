@@ -91,14 +91,14 @@ new Vue({
 
         }.bind(this));
 
-        socket.on('hidden_price', function (price) {
-            this.price_product = price.price_product;
-            this.price_company = price.price_company;
-            this.price_prod = price.price_prod;
+        socket.on('hidden_price', function (result) {
+            this.price_product = result.price_product;
+            this.price_company = result.price_company;
+            this.price_prod = result.price_prod;
         }.bind(this));
 
         socket.on('by_product', function (result) {
-            this.stop = price.stop;
+            this.stop = result.stop;
 
         }.bind(this));
     },
@@ -174,10 +174,11 @@ new Vue({
         },
         by_product: function(event){
             this.stop = true;
-            socket.emit('hidden_price', {
+            socket.emit('by_product', {
                 room: this.room,
                 stop: this.stop
             });
+            window.location.reload();
         }
 
     }
