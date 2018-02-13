@@ -72,10 +72,20 @@ io.on('connection', function (socket) {
         io.to(username.room).emit('stopped typing', username.id);
     });
 
+
+    //hidden price
+    socket.on('hidden_price', function (result) {
+        io.to(result.room).emit('hidden_price', result);
+    });
+    //hidden price
+    socket.on('by_product', function (result) {
+        io.to(result.room).emit('by_product', result);
+    });
+
     socket.on('disconnect', function () {
         console.log('User left: ' + socket.id);
         //disconnected
         socket.broadcast.emit('user left', socket.id);
-    })
+    });
 
 });
