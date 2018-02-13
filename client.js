@@ -38,7 +38,6 @@ new Vue({
         socket.on('user joined', function (result) {
             this.product.price_product = result.price_product;
             this.product.name_product = result.name_product;
-
             //get connected user first
             axios.get('/onlineusers')
                 .then(function (response) {
@@ -112,7 +111,11 @@ new Vue({
         },
         sendReg: function (res) {
             this.message.reg = true;
-            socket.emit('add nameuser', {name: res.srcElement.elements.username.value, id: socket.id});
+            console.log(res.target.elements.username.value);
+            socket.emit('add nameuser', {
+                name: res.target.elements.username.value,
+                id: socket.id
+            });
         },
         show_price: function (event) {
             var self = this;
