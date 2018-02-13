@@ -15,12 +15,11 @@ server.listen(port, function () {
 });
 
 var client = mysql.createPool({
-    host     : config.HOST,
-    user     : config.USER,
-    password : config.PASSWORD,
-    database : config.DATABASE
+    host: config.HOST,
+    user: config.USER,
+    password: config.PASSWORD,
+    database: config.DATABASE
 });
-
 
 
 app.get('/', function (request, response, next) {
@@ -72,7 +71,7 @@ io.on('connection', function (socket) {
             connection.query('SELECT * FROM products WHERE id=1', function (error, res, fields) {
                 //connect user
                 console.log(res[0].price);
-                io.to(r).emit('user joined',{
+                io.to(r).emit('user joined', {
                     socket_id: socket.id,
                     name_product: res[0].name,
                     price_product: res[0].price
@@ -110,10 +109,18 @@ io.on('connection', function (socket) {
                 console.log("Error connecting database ");
                 return false;
             }
-            console.log(result.price_product);
-            connection.query('UPDATE products SET price= "' + result.price_product + '" WHERE id=1', function (error, res, fields) {
-                io.to(result.room).emit('hidden_price', result);
-                connection.release();
+
+            connection.query('UPDATE products SET price=price-0.25 WHERE id=1', function (error, res, fields) {
+
+                connection.query('SELECT * FROM products WHERE id=1', function (error, res, fields) {
+                    result.price_product = res[0].price;
+                    result.price_user = result.price_user - 0.50;
+                    result.price_company = result.price_company + 0.25;
+                    result.price_prod = result.price_prod + 0.25;
+                    io.to(result.room).emit('hidden_price', result);
+                    connection.release();
+                });
+
             });
         });
     });

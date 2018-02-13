@@ -80,6 +80,8 @@ new Vue({
             this.product.price_product = result.price_product;
             this.price_company = result.price_company;
             this.price_prod = result.price_prod;
+            this.price_user = result.price_user;
+
         }.bind(this));
 
         socket.on('by_product', function (result) {
@@ -120,17 +122,14 @@ new Vue({
         show_price: function (event) {
             var self = this;
             self.hidden = false;
-            this.price_user = this.price_user - 0.50;
-            this.product.price_product = this.product.price_product - 0.25;
-            this.price_company = this.price_company + 0.25;
-            this.price_prod = this.price_prod + 0.25;
 
             socket.emit('hidden_price', {
                 id: socket.id,
                 room: this.room,
                 price_product: this.product.price_product,
                 price_company: this.price_company,
-                price_prod: this.price_prod
+                price_prod: this.price_prod,
+                price_user: this.price_user
             });
 
             function fun() {
