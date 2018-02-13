@@ -21,17 +21,24 @@ new Vue({
             'reg': false
         },
         hidden: true,
+        product:{
+            price_product: '',
+            name_product: ''
+        },
+
         price_user: 100.00,
         price_company: 0.00,
         price_prod: 0.00,
-        price_product: 500.00,
         stop: false,
         room: '',
         areTyping: []
     },
     created: function () {
         //if server emits user joined, update connectedUsers array
-        socket.on('user joined', function (socketId) {
+        socket.on('user joined', function (result) {
+            this.product.price_product = result.price_product;
+            this.product.name_product = result.name_product;
+
             //get connected user first
             axios.get('/onlineusers')
                 .then(function (response) {
@@ -44,7 +51,7 @@ new Vue({
                         }
                     }
                     for (key in this.connectedUsers) {
-                        if (this.connectedUsers[key].id == socketId) {
+                        if (this.connectedUsers[key].id == result.socket_id) {
                             var infoMsg = {
                                 "type": "info",
                                 "msg": "Пользователь " + this.connectedUsers[key].name + " Присоединился"
@@ -54,27 +61,6 @@ new Vue({
                     }
                 }.bind(this));
         }.bind(this));
-
-        /*
-         //if caht.message update messages array
-         socket.on('chat.message', function (message) {
-         this.messages.push(message);
-         }.bind(this));
-
-         //server emit user typing
-         socket.on('user typing', function (username) {
-         this.areTyping.push(username);
-         }.bind(this));
-
-         //server emits stoped typing
-         socket.on('stopped typing', function (username) {
-         var index = this.areTyping.indexOf(username);
-         if (index >= 0) {
-         this.areTyping.splice(index, 1);
-         }
-         }.bind(this));
-
-         */
         //if server broadcast 'user left' remuve leaving users connected users
         socket.on('user left', function (socketId) {
             for (key in this.connectedUsers) {
@@ -92,7 +78,7 @@ new Vue({
         }.bind(this));
 
         socket.on('hidden_price', function (result) {
-            this.price_product = result.price_product;
+            this.product.price_product = result.price_product;
             this.price_company = result.price_company;
             this.price_prod = result.price_prod;
         }.bind(this));
@@ -128,41 +114,18 @@ new Vue({
             this.message.reg = true;
             socket.emit('add nameuser', {name: res.srcElement.elements.username.value, id: socket.id});
         },
-        userIsTyping: function (username) {
-            if (this.areTyping.indexOf(username) >= 0) {
-                $('.pencil').animate({left: '-10px'}, 1000);
-                $('.pencil').animate({left: '0px'}, 1000);
-                return true;
-            }
-            return false;
-        },
-        usersAreTyping: function () {
-            if (this.areTyping.indexOf(socket.id) <= -1) {
-                this.areTyping.push(socket.id);
-                socket.emit('user typing', {id: socket.id, room: this.room});
-            }
-        },
-        stoppedTyping: function (keycode) {
-            if (keycode == '13' || (keycode == '8' && this.message.text == '')) {
-                var index = this.areTyping.indexOf(socket.id);
-                if (index >= 0) {
-                    this.areTyping.splice(index, 1);
-                    socket.emit('stopped typing', {id: socket.id, room: this.room});
-                }
-            }
-        },
         show_price: function (event) {
             var self = this;
             self.hidden = false;
             this.price_user = this.price_user - 0.50;
-            this.price_product = this.price_product - 0.25;
+            this.product.price_product = this.product.price_product - 0.25;
             this.price_company = this.price_company + 0.25;
             this.price_prod = this.price_prod + 0.25;
 
             socket.emit('hidden_price', {
                 id: socket.id,
                 room: this.room,
-                price_product: this.price_product,
+                price_product: this.product.price_product,
                 price_company: this.price_company,
                 price_prod: this.price_prod
             });

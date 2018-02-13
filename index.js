@@ -1,6 +1,8 @@
 var express = require('express');
 
 var app = express();
+var config = require('./config');
+var mysql = require('mysql');
 
 var server = require('http').Server(app);
 var port = process.env.PORT || 5557;
@@ -12,6 +14,14 @@ server.listen(port, function () {
     console.log("listen port: " + port);
 });
 
+var client = mysql.createPool({
+    host     : config.HOST,
+    user     : config.USER,
+    password : config.PASSWORD,
+    database : config.DATABASE
+});
+
+
 
 app.get('/', function (request, response, next) {
     r = request.query.room;
@@ -22,7 +32,6 @@ app.get('/', function (request, response, next) {
 
 
 app.get('/onlineusers', function (request, response) {
-    //response.send(CircularJSON.stringify(io));
     response.send(room);
 });
 
@@ -52,9 +61,28 @@ io.on('connection', function (socket) {
                 }
             }
         }
-        //connect user
-        io.to(r).emit('user joined', socket.id);
-        console.log('A user connected: ' + socket.id);
+
+        client.getConnection(function (err, connection) {
+            if (!err) {
+                console.log("Database is connected ");
+            } else {
+                console.log("Error connecting database ");
+                return false;
+            }
+            connection.query('SELECT * FROM products WHERE id=1', function (error, res, fields) {
+                //connect user
+                console.log(res[0].price);
+                io.to(r).emit('user joined',{
+                    socket_id: socket.id,
+                    name_product: res[0].name,
+                    price_product: res[0].price
+                });
+                console.log('A user connected: ' + socket.id);
+                connection.release();
+            });
+        });
+
+
     });
 
 //client message
@@ -75,7 +103,19 @@ io.on('connection', function (socket) {
 
     //hidden price
     socket.on('hidden_price', function (result) {
-        io.to(result.room).emit('hidden_price', result);
+        client.getConnection(function (err, connection) {
+            if (!err) {
+                console.log("Database is connected ");
+            } else {
+                console.log("Error connecting database ");
+                return false;
+            }
+            console.log(result.price_product);
+            connection.query('UPDATE products SET price= "' + result.price_product + '" WHERE id=1', function (error, res, fields) {
+                io.to(result.room).emit('hidden_price', result);
+                connection.release();
+            });
+        });
     });
     //hidden price
     socket.on('by_product', function (result) {
