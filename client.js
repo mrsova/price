@@ -17,35 +17,36 @@ new Vue({
             'action': '',
             'user': '',
             'text': '',
-            'timestamp': '',
-            'reg': false
+            'timestamp': '',            
         },
         hidden: true,
         product:{
             price_product: '',            
             token: '',
-            product_id: ''
+            product_id: '',
+            company_id: '',
         },
-
-        price_user: 100.00,
-        price_company: 0.00,
-        price_prod: 0.00,
         stop: false,
         room: '',
         areTyping: []
     },
     created: function () {
-        //if server emits user joined, update connectedUsers array
+        //Оповещаем всех пользователей о новом пользоватле                
+        socket.emit('add nameuser', {
+            name: socket.id + "_USER",
+            id: socket.id
+        });
+        
+        //Если пользователь зашел. обновляем массив connectedUsers
         socket.on('user joined', function (result) {
             this.product.price_product = result.price_product;           
             this.product.product_id = result.product_id;
-            this.product.token = result.token
-
+            this.product.company_id = result.company_id;
 
             //get connected user first
             axios.get('/onlineusers')
                 .then(function (response) {
-                    for (key in response.data) {
+                    for (key in response.data){
                         this.room = key;
                         for (var k in response.data[key].sockets) {
                             if (!in_array(k, this.connectedUsers)) {
@@ -64,7 +65,7 @@ new Vue({
                     }
                 }.bind(this));
         }.bind(this));
-        //if server broadcast 'user left' remuve leaving users connected users
+        //Если пользователь вышел, очищаем массив
         socket.on('user left', function (socketId) {
             for (key in this.connectedUsers) {
                 if (this.connectedUsers[key].id == socketId) {
@@ -80,14 +81,12 @@ new Vue({
 
         }.bind(this));
 
+        //Принимаем действие hidden_price
         socket.on('hidden_price', function (result) {
             this.product.price_product = result.price_product;
-            this.price_company = result.price_company;
-            this.price_prod = result.price_prod;
-            this.price_user = result.price_user;
-
         }.bind(this));
-
+        
+        //Принимаем действие by_product
         socket.on('by_product', function (result) {
             this.stop = result.stop;
 
@@ -114,26 +113,17 @@ new Vue({
             $("#messages").bind('DOMSubtreeModified', function () { // отслеживаем изменение содержимого блока
                 document.getElementById('panB').scrollTop = 10000000000000000000000000;
             });
-        },
-        sendReg: function (res) {
-            this.message.reg = true;            
-            socket.emit('add nameuser', {
-                name: res.target.elements.username.value,
-                id: socket.id
-            });
-        },
+        },    
         show_price: function (event) {
             var self = this;
             self.hidden = false;
 
-            /*socket.emit('hidden_price', {
+            socket.emit('hidden_price', {
                 id: socket.id,
                 room: this.room,
                 price_product: this.product.price_product,
-                price_company: this.price_company,
-                price_prod: this.price_prod,
-                price_user: this.price_user
-            });*/
+                company_id: this.product.company_id    
+            });
 
             function fun() {
                 self.hidden = true;

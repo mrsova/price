@@ -18,16 +18,7 @@
 <div id="app">
     <div class="container">
         <div class="row">
-            <div class="col-md-12" v-if="message.reg == false">
-                <h3>Введите ваше имя</h3>
-                <form @submit.prevent="sendReg">
-                    <div class="input-group">
-                        <span class="input-group-addon">@</span>
-                        <input type="text" name="username" class="form-control input-lg" placeholder="Ваше имя">
-                    </div>
-                </form>
-            </div>
-            <div class="col-md-12" v-if="message.reg == true" v-cloak>
+            <div class="col-md-12">
                 <div id="livechat-container">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
@@ -69,10 +60,7 @@
                                 </div><!-- /.container-fluid -->
                             </nav>
                         </div>
-                        <div class="panel-body" id="panB">
-                            <a style="padding-right:20px">Счет покупателя <span class="label label-success">{{price_user}}</span>$ </a>
-                            <a style="padding-right:20px">Счет продавца <span class="label label-success">{{price_prod}}</span>$ </a>
-                            <a style="padding-right:20px">Счет компании <span class="label label-success">{{price_company}}</span>$ </a>
+                        <div class="panel-body" id="panB">                       
 
                             <ul class="chat" id="messages">
                                 <li v-for="message in messages" class="left clearfix">

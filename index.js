@@ -24,7 +24,8 @@ var client = mysql.createPool({
 
 app.get('/', function (request, response, next) {
     r = request.query.room;
-    token = request.query.token;    
+    token = request.query.token; 
+    company_id = request.query.company_id; 
     next();
 }, function (request, response) {
     response.sendFile(__dirname + '/index.html');
@@ -68,8 +69,7 @@ io.on('connection', function (socket) {
             } else {
                 console.log("Error connecting database ");
                 return false;
-            }
-            console.log(r);
+            }            
             connection.query('SELECT price FROM cscart_product_prices WHERE product_id="'+r+'"', function (error, res, fields) {
                 //connect user                   
                 
@@ -77,7 +77,8 @@ io.on('connection', function (socket) {
                     socket_id: socket.id,                    
                     price_product: res[0].price,
                     token: token,
-                    product_id: r
+                    product_id: r,
+                    company_id: company_id
                 });
 
                 console.log('A user connected: ' + socket.id);
@@ -114,17 +115,18 @@ io.on('connection', function (socket) {
                 return false;
             }
 
-            connection.query('UPDATE products SET price=price-0.25 WHERE id=1', function (error, res, fields) {
-
-                connection.query('SELECT * FROM products WHERE id=1', function (error, res, fields) {
-                    result.price_product = res[0].price;
-                    result.price_user = result.price_user - 0.50;
-                    result.price_company = result.price_company + 0.25;
-                    result.price_prod = result.price_prod + 0.25;
+            connection.query('UPDATE cscart_product_prices SET price=price-0.25 WHERE product_id="'+r+'"', function (error, res, fields) {
+                connection.query('SELECT price FROM cscart_product_prices WHERE product_id="'+r+'"', function (error, res, fields) {
+                    result.price_product = res[0].price;                    
                     io.to(result.room).emit('hidden_price', result);
-                    connection.release();
+                    //connection.release();
                 });
+            });
 
+            connection.query("INSERT INTO cscart_vendor_payouts (company_id,payout_amount,commission)" +
+                        " VALUES('" + result.company_id + "','0.50', '50.00')", function (errr, res, fields) {
+                  console.log(errr);          
+                connection.release();                            
             });
         });
     });
