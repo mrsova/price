@@ -12,6 +12,9 @@
         display: none;
     }
 </style>
+
+
+
 <div id="app">
     <div class="container">
         <div class="row">
@@ -88,7 +91,14 @@
 
                                     <span class="block_hidden" v-if="hidden == false" v-cloak v-on:click="by_product">
                                         <span id="price">{{ product.price_product }}</span> $
-                                        <a class="label label-default" id="by">Купить</a>
+                                        <form target="_top" action="http://freemulti.ru/index.php" method="post" :name="'product_form_' + product.product_id" enctype="multipart/form-data" class="cm-disable-empty-files   cm-processed-form">
+                                        <input type="hidden" name="result_ids" value="cart_status*,wish_list*,checkout*,account_info*">
+                                        <input type="hidden" name="redirect_url" :value="'index.php?dispatch=products.view&amp;product_id=' +product.product_id+'&amp;cc='">
+                                        <input type="hidden" :name="'product_data[' + product.product_id +'][product_id]'" :value="product.product_id">
+                                        <input type="hidden" name="product_id" :value="product.product_id">
+                                        <button :id="'button_cart_' + product.product_id" class="ty-btn__primary ty-btn__big ty-btn__add-to-cart cm-form-dialog-closer ty-btn" type="submit" :name="'dispatch[checkout.add..' +product.product_id +']'">В корзину</button>    
+                                        <input type="hidden" name="security_hash" class="cm-no-hide-input" :value="product.token">
+                                        </form>                                         
                                     </span>
                                 </div>
                                 <div v-cloak v-if="stop == true">

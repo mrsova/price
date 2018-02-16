@@ -22,8 +22,9 @@ new Vue({
         },
         hidden: true,
         product:{
-            price_product: '',
-            name_product: ''
+            price_product: '',            
+            token: '',
+            product_id: ''
         },
 
         price_user: 100.00,
@@ -36,8 +37,11 @@ new Vue({
     created: function () {
         //if server emits user joined, update connectedUsers array
         socket.on('user joined', function (result) {
-            this.product.price_product = result.price_product;
-            this.product.name_product = result.name_product;
+            this.product.price_product = result.price_product;           
+            this.product.product_id = result.product_id;
+            this.product.token = result.token
+
+
             //get connected user first
             axios.get('/onlineusers')
                 .then(function (response) {
@@ -112,8 +116,7 @@ new Vue({
             });
         },
         sendReg: function (res) {
-            this.message.reg = true;
-            console.log(res.target.elements.username.value);
+            this.message.reg = true;            
             socket.emit('add nameuser', {
                 name: res.target.elements.username.value,
                 id: socket.id
@@ -123,14 +126,14 @@ new Vue({
             var self = this;
             self.hidden = false;
 
-            socket.emit('hidden_price', {
+            /*socket.emit('hidden_price', {
                 id: socket.id,
                 room: this.room,
                 price_product: this.product.price_product,
                 price_company: this.price_company,
                 price_prod: this.price_prod,
                 price_user: this.price_user
-            });
+            });*/
 
             function fun() {
                 self.hidden = true;

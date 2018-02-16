@@ -24,6 +24,7 @@ var client = mysql.createPool({
 
 app.get('/', function (request, response, next) {
     r = request.query.room;
+    token = request.query.token;    
     next();
 }, function (request, response) {
     response.sendFile(__dirname + '/index.html');
@@ -68,14 +69,17 @@ io.on('connection', function (socket) {
                 console.log("Error connecting database ");
                 return false;
             }
-            connection.query('SELECT * FROM products WHERE id=1', function (error, res, fields) {
-                //connect user
-                console.log(res[0].price);
+            console.log(r);
+            connection.query('SELECT price FROM cscart_product_prices WHERE product_id="'+r+'"', function (error, res, fields) {
+                //connect user                   
+                
                 io.to(r).emit('user joined', {
-                    socket_id: socket.id,
-                    name_product: res[0].name,
-                    price_product: res[0].price
+                    socket_id: socket.id,                    
+                    price_product: res[0].price,
+                    token: token,
+                    product_id: r
                 });
+
                 console.log('A user connected: ' + socket.id);
                 connection.release();
             });
