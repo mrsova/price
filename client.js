@@ -42,6 +42,7 @@ new Vue({
             this.product.price_product = result.price_product;           
             this.product.product_id = result.product_id;
             this.product.company_id = result.company_id;
+            this.product.token = result.token;
 
             //get connected user first
             axios.get('/onlineusers')
