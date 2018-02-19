@@ -14,91 +14,33 @@
 </style>
 
 
+<div id="app">            
+    <div id="panB">                       
+            <div v-if="stop == false">
+                <span class="block_show" v-if="hidden == true" v-on:click="show_price">
+                    <a class="label label-default" id="hidden_price">Показать цену</a>
 
-<div id="app">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div id="livechat-container">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <nav class="navbar navbar-default" role="navigation">
-                                <div class="container-fluid">
-                                    <!-- Brand and toggle get grouped for better mobile display -->
-                                    <div class="navbar-header">
-                                        <button type="button" class="navbar-toggle" data-toggle="collapse"
-                                                data-target="#bs-example-navbar-collapse-1">
-                                            <span class="sr-only">Toggle navigation</span>
-                                            <span class="icon-bar"></span>
-                                            <span class="icon-bar"></span>
-                                            <span class="icon-bar"></span>
-                                        </button>
-                                        <a class="navbar-brand" href="#">Hidden price</a>
-                                    </div>
+                </span>
 
-                                    <!-- Collect the nav links, forms, and other content for toggling -->
-                                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                                        <ul class="nav navbar-nav">
-                                            <li class="dropdown">
-                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Кто здесь? <b
-                                                        class="caret"></b></a>
-                                                <ul class="dropdown-menu">
-                                                    <div class="userlist" v-if="message.reg == true">
-                                                        <div class="panel-heading">
-                                                            <button type="button" class="btn btn-primary">Online ({{connectedUsers.length}})</button>
-                                                        </div>
-                                                        <ul class="nav nav-pills nav-stacked">
-                                                            <li v-for="user in connectedUsers">
-                                                                <a href="#"> {{ user.name }}</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div><!-- /.navbar-collapse -->
-                                </div><!-- /.container-fluid -->
-                            </nav>
-                        </div>
-                        <div class="panel-body" id="panB">                       
-
-                            <ul class="chat" id="messages">
-                                <li v-for="message in messages" class="left clearfix">
-                                    <div v-if="message.type == 'info'" class="info">
-                                        {{ message.msg }}
-                                    </div>
-                                </li>
-                            </ul>
-
-                                Какой то товар
-                                <div v-if="stop == false">
-                                    <span class="block_show" v-if="hidden == true" v-on:click="show_price">
-                                        <a class="label label-default" id="hidden_price">Показать цену</a>
-
-                                    </span>
-
-                                    <span class="block_hidden" v-if="hidden == false" v-cloak v-on:click="by_product">
-                                        <span id="price">{{ product.price_product }}</span> $
-                                        <form target="_top" action="http://freemulti.ru/index.php" method="post" :name="'product_form_' + product.product_id" enctype="multipart/form-data" class="cm-disable-empty-files   cm-processed-form">
-                                        <input type="hidden" name="result_ids" value="cart_status*,wish_list*,checkout*,account_info*">
-                                        <input type="hidden" name="redirect_url" :value="'index.php?dispatch=products.view&amp;product_id=' +product.product_id+'&amp;cc='">
-                                        <input type="hidden" :name="'product_data[' + product.product_id +'][product_id]'" :value="product.product_id">
-                                        <input type="hidden" name="product_id" :value="product.product_id">
-                                        <button :id="'button_cart_' + product.product_id" class="ty-btn__primary ty-btn__big ty-btn__add-to-cart cm-form-dialog-closer ty-btn" type="submit" :name="'dispatch[checkout.add..' +product.product_id +']'">В корзину</button>    
-                                        <input type="hidden" name="security_hash" class="cm-no-hide-input" :value="product.token">
-                                        </form>                                         
-                                    </span>
-                                </div>
-                                <div v-cloak v-if="stop == true">
-                                    Товар продан
-                                </div>
-                        </div>
-                    </div>
-                </div>
+                <span class="block_hidden" v-if="hidden == false" v-cloak v-on:click="by_product">
+                    <span id="price">{{ product.price_product }}</span> $
+                    <form target="_top" action="http://freemulti.ru/index.php" method="post" :name="'product_form_' + product.product_id" enctype="multipart/form-data" class="cm-disable-empty-files   cm-processed-form">
+                    <input type="hidden" name="result_ids" value="cart_status*,wish_list*,checkout*,account_info*">
+                    <input type="hidden" name="redirect_url" :value="'index.php?dispatch=products.view&amp;product_id=' +product.product_id+'&amp;cc='">
+                    <input type="hidden" :name="'product_data[' + product.product_id +'][product_id]'" :value="product.product_id">
+                    <input type="hidden" name="product_id" :value="product.product_id">
+                    <button :id="'button_cart_' + product.product_id" class="ty-btn__primary ty-btn__big ty-btn__add-to-cart cm-form-dialog-closer ty-btn" type="submit" :name="'dispatch[checkout.add..' +product.product_id +']'">В корзину</button>    
+                    <input type="hidden" name="security_hash" class="cm-no-hide-input" :value="product.token">
+                    </form>                                         
+                </span>
             </div>
-        </div>
-    </div>
+            <div v-cloak v-if="stop == true">
+                Товар продан
+            </div>
+    </div>              
 </div>
+
+ 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>

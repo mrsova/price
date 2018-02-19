@@ -122,12 +122,13 @@ io.on('connection', function (socket) {
                     //connection.release();
                 });
             });
-
-            connection.query("INSERT INTO cscart_vendor_payouts (company_id,payout_amount,commission)" +
-                        " VALUES('" + result.company_id + "','0.50', '50.00')", function (errr, res, fields) {
-                  console.log(errr);          
-                connection.release();                            
-            });
+            d = new Date;
+            date = Math.floor(d.getTime()/1000);
+connection.query("INSERT INTO cscart_vendor_payouts (payout_date, company_id, payout_amount, commission, commission_amount, payout_type, comments)" +
+" VALUES('" + date + "','" + result.company_id + "','0.50', '50.00', '0.25', 'click', 'Pay to click')", function (errr, res, fields) {
+      console.log(errr);          
+    connection.release();                            
+});
         });
     });
     //hidden price
