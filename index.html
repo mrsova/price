@@ -24,7 +24,7 @@
 
                 <span class="block_hidden" v-if="hidden == false" v-cloak v-on:click="by_product">
                     <span id="price">{{ product.price_product }}</span> $
-                    <form target="_top" action="http://freemulti.ru/index.php" method="post" :name="'product_form_' + product.product_id" enctype="multipart/form-data" class="cm-disable-empty-files   cm-processed-form">
+                    <form target="_top" action="http://multi.obvad.ru/index.php" method="post" :name="'product_form_' + product.product_id" enctype="multipart/form-data" class="cm-disable-empty-files   cm-processed-form">
                     <input type="hidden" name="result_ids" value="cart_status*,wish_list*,checkout*,account_info*">
                     <input type="hidden" name="redirect_url" :value="'index.php?dispatch=products.view&amp;product_id=' +product.product_id+'&amp;cc='">
                     <input type="hidden" :name="'product_data[' + product.product_id +'][product_id]'" :value="product.product_id">
